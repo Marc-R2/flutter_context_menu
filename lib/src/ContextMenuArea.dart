@@ -3,15 +3,16 @@ import 'package:flutter/material.dart';
 
 import 'ContextMenu.dart';
 
-/// Show a [ContextMenu] on the given [BuildContext]. For other parameters, see [ContextMenu].
-void showContextMenu(
-  Offset offset,
-  BuildContext context,
-  List<Widget> children,
-  verticalPadding,
-  width,
-) {
-  showModal(
+/// Show a [ContextMenu] on the given [BuildContext].
+/// For other parameters, see [ContextMenu].
+Future<T?> showContextMenu<T>({
+  required BuildContext context,
+  required Offset offset,
+  required List<Widget> children,
+  double verticalPadding = 8,
+  double width = 320,
+}) {
+  return showModal<T>(
     context: context,
     configuration: FadeScaleTransitionConfiguration(
       barrierColor: Colors.transparent,
@@ -53,23 +54,21 @@ class ContextMenuArea extends StatelessWidget {
     this.width = 320,
   }) : super(key: key);
 
+  void show(BuildContext context, Offset offset) {
+    showContextMenu(
+      offset: offset,
+      context: context,
+      children: items,
+      verticalPadding: verticalPadding,
+      width: width,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onSecondaryTapDown: (details) => showContextMenu(
-        details.globalPosition,
-        context,
-        items,
-        verticalPadding,
-        width,
-      ),
-      onLongPressStart: (details) => showContextMenu(
-        details.globalPosition,
-        context,
-        items,
-        verticalPadding,
-        width,
-      ),
+      onSecondaryTapDown: (details) => show(context, details.globalPosition),
+      onLongPressStart: (details) => show(context, details.globalPosition),
       child: child,
     );
   }
